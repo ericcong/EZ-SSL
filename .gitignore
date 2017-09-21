@@ -1,0 +1,14 @@
+*.class
+*.log
+*.jar
+*.zip
+*.tar.gz
+
+hs_err_pid*
+
+.idea
+bazel-bin
+bazel-genfiles
+bazel-EZ-SSL
+bazel-out
+bazel-testlogs
