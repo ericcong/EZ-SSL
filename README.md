@@ -7,10 +7,10 @@ things easier. It includes a suite of bash scripts which are essentially
 wrappers for `keytool` with certain arguments, and two Java classes for SSL
 socket server and client.
 
-## Generating key pair with signed certificate
-The procedure of generating certificates with EZ-SSL toolkit can be explained
-with an example. Assume we want to build a system which requires SSL, and we
-want to use our private CA.
+## Generating key pair
+The procedure of generating key pair with EZ-SSL toolkit can be explained with
+an example. Assume we want to build a system which requires SSL, and we want to
+use our private CA.
 
 ### Create the CA
 The first thing to do is to create the CA, let's call the CA "Boss".
