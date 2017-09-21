@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# Import a PEM format certificate to jks file.
+# Usage: ./import_certificate foo.pem bar.jks
+
+pem="$(basename $1)"
+name="${pem%.*}"
+
+keytool -importcert -file "$1" -keystore "$2" -alias $name

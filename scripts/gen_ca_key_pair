@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Generate CA key pair.
+# Usage: ./gen_ca_key_pair ca
+# Output: ca.jks
+
+keytool -genkeypair -ext bc=ca:true -keystore "$1.jks" -alias "$1"

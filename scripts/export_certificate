@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Export the public key of a key pair to a PEM format certificate.
+# Usage: ./export_certificate foo.jks
+# Output: foo.pem
+
+jks="$(basename $1)"
+name="${jks%.*}"
+pem="$name.pem"
+
+keytool -exportcert -rfc -keystore "$1" -file $pem -alias $name

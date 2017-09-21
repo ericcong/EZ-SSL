@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Generate key pair.
+# Usage: ./gen_key_pair foo
+# Output: foo.jks
+
+keytool -genkeypair -keystore "$1.jks" -alias "$1"

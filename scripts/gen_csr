@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+# Generate a Certificate Signature Request.
+# Usage: ./gen_csr foo.jks
+# Output: foo.csr
+
+jks="$(basename $1)"
+name="${jks%.*}"
+csr="$name.csr"
+
+keytool -certreq -keystore "$1" -alias $name -file $csr

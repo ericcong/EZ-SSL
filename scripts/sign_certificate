@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+# Generate a signed PEM format certificate.
+# Usage: ./sign_certificate foo.csr issuer.jks
+# Output: foo.pem
+
+csr="$(basename $1)"
+pem="${csr%.*}.pem"
+
+issuer="$(basename $2)"
+name="${issuer%.*}"
+
+keytool -gencert -rfc -keystore "$2" -alias $name -infile "$1" -outfile $pem
