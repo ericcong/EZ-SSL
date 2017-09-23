@@ -20,3 +20,8 @@ java_library(
         ":abstract_ssl_builder",
     ],
 )
+
+java_library(
+    name = "ezssl",
+    srcs = glob(["*.java"]),
+)
