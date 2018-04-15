@@ -25,3 +25,9 @@ java_library(
     name = "ezssl",
     srcs = glob(["*.java"]),
 )
+
+java_binary(
+    name = "ezssl_bin",
+    srcs = glob(["*.java"]),
+)
+
