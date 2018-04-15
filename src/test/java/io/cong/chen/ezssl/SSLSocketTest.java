@@ -17,7 +17,7 @@ public class SSLSocketTest {
   private static String ALPHA_JKS_PATH = "/Alpha.jks";
   private static String ALPHA_PASSWORD = "alphapass";
   private static String ALPHA_PRINCIPAL_NAME = "CN=Alpha Department," +
-      "OU=Alpha Department,O=chen.cong.io,L=Piscataway,ST=NJ,C=US";
+      "OU=Alpha Department,O=chen.cong.io,L=Highland Park,ST=NJ,C=US";
 
   // Beta.jks includes Beta's public/private key pair, it also trusts Boss's
   // public certificate.
