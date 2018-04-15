@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Generate key pair.
-# Usage: ./gen_key_pair foo
-# Output: foo.jks
+# Usage: ./gen_key_pair foo 30
+# Output: foo.jks, valid for 30 days
 
-keytool -genkeypair -keystore "$1.jks" -alias "$1"
+keytool -genkeypair -keystore "$1.jks" -alias "$1" -validity "$2"

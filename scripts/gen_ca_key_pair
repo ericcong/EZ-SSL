@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Generate CA key pair.
-# Usage: ./gen_ca_key_pair ca
-# Output: ca.jks
+# Usage: ./gen_ca_key_pair ca 30
+# Output: ca.jks, valid for 30 days
 
-keytool -genkeypair -ext bc=ca:true -keystore "$1.jks" -alias "$1"
+keytool -genkeypair -ext bc=ca:true -keystore "$1.jks" -alias "$1" -validity "$2"
