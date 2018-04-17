@@ -2,6 +2,6 @@
 
 # Generate CA key pair.
 # Usage: ./gen_ca_key_pair ca 30
-# Output: ca.jks, valid for 30 days
+# Output: ca.p12, valid for 30 days
 
-keytool -genkeypair -ext bc=ca:true -keystore "$1.jks" -alias "$1" -validity "$2"
+keytool -genkeypair -storetype PKCS12 -ext bc=ca:true -keystore "$1.p12" -alias "$1" -validity "$2"

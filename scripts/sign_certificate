@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Generate a signed PEM format certificate.
-# Usage: ./sign_certificate foo.csr issuer.jks 30
+# Usage: ./sign_certificate foo.csr issuer.p12 30
 # Output: foo.pem, valid for 30 days
 
 csr="$(basename $1)"
@@ -10,4 +10,4 @@ pem="${csr%.*}.pem"
 issuer="$(basename $2)"
 name="${issuer%.*}"
 
-keytool -gencert -rfc -keystore "$2" -alias $name -infile "$1" -outfile $pem -validity "$3"
+keytool -gencert -storetype PKCS12 -rfc -keystore "$2" -alias $name -infile "$1" -outfile $pem -validity "$3"

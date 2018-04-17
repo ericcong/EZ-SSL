@@ -2,6 +2,6 @@
 
 # Generate key pair.
 # Usage: ./gen_key_pair foo 30
-# Output: foo.jks, valid for 30 days
+# Output: foo.p12, valid for 30 days
 
-keytool -genkeypair -keystore "$1.jks" -alias "$1" -validity "$2"
+keytool -genkeypair -storetype PKCS12 -keystore "$1.p12" -alias "$1" -validity "$2"

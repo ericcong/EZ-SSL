@@ -12,35 +12,36 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 public abstract class AbstractSSLBuilder <T extends AbstractSSLBuilder<T>>{
-  private static String JKS = "JKS";
-  private static String X509 = "SunX509";
+  private static String KEY_STORE_TYPE = "PKCS12";
+  private static String KEY_PAIR_ALGORITHM = "SunX509";
   static String TLS = "TLS";
 
   KeyManager[] keyManagerList = null;
   TrustManager[] trustManagerList = null;
 
-  private KeyStore getKeyStore(
-      InputStream keyStoreInputStream,
+  private KeyStore loadKeyStore(
+      byte[] keyStoreByteArray,
       String keyStorePassword,
-      String keyStoreAlgorithm)
+      String keyStoreType)
       throws CertificateException, NoSuchAlgorithmException, IOException,
       KeyStoreException {
-    char[] keyPairPasswordCharArray = keyStorePassword.toCharArray();
-    KeyStore keyStore = KeyStore.getInstance(keyStoreAlgorithm);
-    keyStore.load(keyStoreInputStream, keyPairPasswordCharArray);
+    KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+    keyStore.load(
+        new ByteArrayInputStream(keyStoreByteArray),
+        keyStorePassword.toCharArray());
     return keyStore;
   }
 
   public T setKeyStore(
-      InputStream keyStoreInputStream,
+      byte[] keyStoreByteArray,
       String keyStorePassword,
-      String keyStoreAlgorithm,
+      String keyStoreType,
       String keyPairAlgorithm)
       throws KeyStoreException, IOException, CertificateException,
       NoSuchAlgorithmException, UnrecoverableKeyException {
 
     KeyStore keyStore =
-        getKeyStore(keyStoreInputStream, keyStorePassword, keyStoreAlgorithm);
+        loadKeyStore(keyStoreByteArray, keyStorePassword, keyStoreType);
 
     KeyManagerFactory keyManagerFactory =
         KeyManagerFactory.getInstance(keyPairAlgorithm);
@@ -52,15 +53,15 @@ public abstract class AbstractSSLBuilder <T extends AbstractSSLBuilder<T>>{
   }
 
   public T setTrustedKeyStore(
-      InputStream keyStoreInputStream,
+      byte[] keyStoreByteArray,
       String keyStorePassword,
-      String keyStoreAlgorithm,
+      String keyStoreType,
       String keyPairAlgorithm)
       throws KeyStoreException, IOException, CertificateException,
       NoSuchAlgorithmException, UnrecoverableKeyException {
 
     KeyStore keyStore =
-        getKeyStore(keyStoreInputStream, keyStorePassword, keyStoreAlgorithm);
+        loadKeyStore(keyStoreByteArray, keyStorePassword, keyStoreType);
 
     TrustManagerFactory trustManagerFactory =
         TrustManagerFactory.getInstance(keyPairAlgorithm);
@@ -71,24 +72,29 @@ public abstract class AbstractSSLBuilder <T extends AbstractSSLBuilder<T>>{
     return (T) this;
   }
 
-  public T setJKS(
-      InputStream jksInputStream, String jksPassword)
+  public T setKeyStore(byte[] keyStoreByteArray, String keyStorePassword)
       throws UnrecoverableKeyException, CertificateException,
       NoSuchAlgorithmException, KeyStoreException, IOException {
-    BufferedInputStream bufferedInputStream =
-        new BufferedInputStream(jksInputStream);
-    bufferedInputStream.mark(Integer.MAX_VALUE);
-    this.setKeyStore(bufferedInputStream, jksPassword, JKS, X509);
-    bufferedInputStream.reset();
-    this.setTrustedKeyStore(bufferedInputStream, jksPassword, JKS, X509);
-    bufferedInputStream.close();
-    return (T) this;
+    return this
+        .setKeyStore(
+            keyStoreByteArray,
+            keyStorePassword,
+            KEY_STORE_TYPE,
+            KEY_PAIR_ALGORITHM)
+        .setTrustedKeyStore(
+            keyStoreByteArray,
+            keyStorePassword,
+            KEY_STORE_TYPE,
+            KEY_PAIR_ALGORITHM);
   }
 
-  public T setTrustedJKS(
-      InputStream jksInputStream, String jksPassword)
+  public T setTrustedKeyStore(byte[] keyStoreByteArray, String keyStorePassword)
       throws UnrecoverableKeyException, CertificateException,
       NoSuchAlgorithmException, KeyStoreException, IOException {
-    return this.setTrustedKeyStore(jksInputStream, jksPassword, JKS, X509);
+    return this.setTrustedKeyStore(
+        keyStoreByteArray,
+        keyStorePassword,
+        KEY_STORE_TYPE,
+        KEY_PAIR_ALGORITHM);
   }
 }

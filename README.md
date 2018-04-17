@@ -23,13 +23,13 @@ First we create the key pair with:
 ```gen_ca_key_pair Boss```
 
 After setting the password and other information, we will get a file called
-`Boss.jks`, which contains the public/private key pair of Boss. Make sure to
+`Boss.p12`, which contains the public/private key pair of Boss. Make sure to
 keep this file and the password secured, because this file will represent the
 signature power and the identity of Boss.
 
 Then we generate the certificate of Boss with
 
-```export_certificate Boss.jks```
+```export_certificate Boss.p12```
 
 After typing the password of Boss, we will get a file called `Boss.pem`, and
 this is the self-signed certificate of Boss, we can share this certificate with
@@ -44,7 +44,7 @@ First we create out public/private key pair with:
 ```gen_key_pair Alpha```
 
 After setting the password and other information, we will get a file called
-`Alpha.jks`, which contains the public/private key pair of Alpha. Make sure to
+`Alpha.p12`, which contains the public/private key pair of Alpha. Make sure to
 keep this file and password secured within Alpha Department, because this file
 will represent the identity of Alpha.
 
@@ -52,12 +52,12 @@ Then we need to trust Boss (of course), so that we can trust all certificates
 signed by Boss, and we can also request Boss to sign our certificate. So we ask
 Boss for its certificate `Boss.pem`, then we trust this certificate with:
 
-```import_certificate Boss.pem Alpha.jks```
+```import_certificate Boss.pem Alpha.p12```
 
 Now we can ask Boss to sign our certificate. We generate a Certificate Signature
 Request (CSR) with:
 
-```gen_csr Alpha.jks```
+```gen_csr Alpha.p12```
 
 Then we will get a file `Alpha.csr`. We can send this file to Boss to request a
 signed certificate.
@@ -66,7 +66,7 @@ signed certificate.
 Now switch to Boss. We just received a CSR `Alpha.csr` from Alpha Department,
 and we agree to sign it. So we can sign it with:
 
-```sign_certificate Alpha.csr Boss.jks```
+```sign_certificate Alpha.csr Boss.p12```
 
 We will get a file `Alpha.pem`, which is the certificate of Alpha signed by
 Boss. We can send this signed certificate back to Alpha Department.
@@ -75,6 +75,6 @@ Boss. We can send this signed certificate back to Alpha Department.
 Now switch to Alpha. We just received the signed certificate `Alpha.pem` from
 Boss, so we just update our key pair with this signed certificate with:
 
-```import_certificate Alpha.pem Alpha.jks```
+```import_certificate Alpha.pem Alpha.p12```
 
 Now our key pair is good to be used in SSL, if the other side trusts Boss.

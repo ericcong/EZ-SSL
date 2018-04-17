@@ -1,5 +1,7 @@
 package io.cong.chen.ezssl;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.net.ssl.SSLServerSocket;
@@ -12,35 +14,62 @@ import static org.junit.Assert.fail;
 
 public class SSLSocketTest {
 
-  // Alpha.jks includes Alpha's public/private key pair, it also trusts Boss's
+  // Alpha.p12 includes Alpha's public/private key pair, it also trusts Boss's
   // public certificate.
-  private static String ALPHA_JKS_PATH = "/Alpha.jks";
-  private static String ALPHA_PASSWORD = "alphapass";
-  private static String ALPHA_PRINCIPAL_NAME = "CN=Alpha Department," +
+  private static final String ALPHA_KEY_STORE_PATH = "/Alpha.p12";
+  private static final String ALPHA_PASSWORD = "alphapass";
+  private static final String ALPHA_PRINCIPAL_NAME = "CN=Alpha Department," +
       "OU=Alpha Department,O=chen.cong.io,L=Highland Park,ST=NJ,C=US";
 
-  // Beta.jks includes Beta's public/private key pair, it also trusts Boss's
+  // Beta.p12 includes Beta's public/private key pair, it also trusts Boss's
   // public certificate.
-  private static String BETA_JKS_PATH = "/Beta.jks";
-  private static String BETA_PASSWORD = "betapass";
-  private static String BETA_PRINCIPAL_NAME = "CN=Beta Department," +
+  private static final String BETA_KEY_STORE_PATH = "/Beta.p12";
+  private static final String BETA_PASSWORD = "betapass";
+  private static final String BETA_PRINCIPAL_NAME = "CN=Beta Department," +
       "OU=Beta Department,O=chen.cong.io,L=Mountain View,ST=CA,C=US";
 
-  // Trusted.jks trusts Boss's public certificate.
-  private static String TRUSTED_JKS_PATH = "/Trusted.jks";
-  private static String TRUSTED_PASSWORD = "trustedpass";
+  // Trusted.p12 trusts Boss's public certificate.
+  private static final String TRUSTED_KEY_STORE_PATH = "/Trusted.p12";
+  private static final String TRUSTED_PASSWORD = "trustedpass";
 
-  private static String MESSAGE = "message";
+  private static final String MESSAGE = "message";
 
-  private String mockMutation(String request) {
+  private static String mockMutation(String request) {
     return "Response for request: \"" + request + "\"";
+  }
+
+  private static byte[] alphaKeyStoreByteArray;
+  private static byte[] betaKeyStoreByteArray;
+  private static byte[] trustedKeyStoreByteArray;
+
+  static {
+    try {
+      InputStream alphaKeyStoreInputStream =
+          SSLSocketTest.class.getResourceAsStream(ALPHA_KEY_STORE_PATH);
+      alphaKeyStoreByteArray =
+          new byte[alphaKeyStoreInputStream.available()];
+      alphaKeyStoreInputStream.read(alphaKeyStoreByteArray);
+
+      InputStream betaKeyStoreInputStream =
+          SSLSocketTest.class.getResourceAsStream(BETA_KEY_STORE_PATH);
+      betaKeyStoreByteArray =
+          new byte[betaKeyStoreInputStream.available()];
+      betaKeyStoreInputStream.read(betaKeyStoreByteArray);
+
+      InputStream trustedKeyStoreInputStream =
+          SSLSocketTest.class.getResourceAsStream(TRUSTED_KEY_STORE_PATH);
+      trustedKeyStoreByteArray =
+          new byte[trustedKeyStoreInputStream.available()];
+      trustedKeyStoreInputStream.read(trustedKeyStoreByteArray);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   @Test
   public void testSSLServerOnly() throws Exception {
     SSLServerSocket sslServerSocket = new SSLServerSocketBuilder()
-        .setJKS(this.getClass().getResourceAsStream(ALPHA_JKS_PATH),
-            ALPHA_PASSWORD)
+        .setKeyStore(alphaKeyStoreByteArray, ALPHA_PASSWORD)
         .build(0);
 
     int port = sslServerSocket.getLocalPort();
@@ -60,8 +89,7 @@ public class SSLSocketTest {
     }).start();
 
     SSLSocket sslSocket = new SSLSocketBuilder()
-        .setTrustedJKS(this.getClass().getResourceAsStream(TRUSTED_JKS_PATH),
-            TRUSTED_PASSWORD)
+        .setTrustedKeyStore(trustedKeyStoreByteArray, TRUSTED_PASSWORD)
         .build("localhost", port);
 
     BufferedWriter out = new BufferedWriter(
@@ -84,8 +112,7 @@ public class SSLSocketTest {
   @Test
   public void testSSLOnBothSides() throws Exception {
     SSLServerSocket sslServerSocket = new SSLServerSocketBuilder()
-        .setJKS(this.getClass().getResourceAsStream(ALPHA_JKS_PATH),
-            ALPHA_PASSWORD)
+        .setKeyStore(alphaKeyStoreByteArray, ALPHA_PASSWORD)
         .build(0);
     sslServerSocket.setNeedClientAuth(true);
 
@@ -108,8 +135,7 @@ public class SSLSocketTest {
     }).start();
 
     SSLSocket sslSocket = new SSLSocketBuilder()
-        .setJKS(this.getClass().getResourceAsStream(BETA_JKS_PATH),
-            BETA_PASSWORD)
+        .setKeyStore(betaKeyStoreByteArray, BETA_PASSWORD)
         .build("localhost", port);
 
     BufferedWriter out = new BufferedWriter(

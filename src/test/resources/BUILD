@@ -1,29 +1,29 @@
 package(default_visibility = ["//visibility:public"])
 
 filegroup(
-    name = "alpha_jks",
+    name = "alpha_keystore",
     srcs = [
-        "Alpha.jks",
+        "Alpha.p12",
     ],
 )
 
 filegroup(
-    name = "beta_jks",
+    name = "beta_keystore",
     srcs = [
-        "Beta.jks",
+        "Beta.p12",
     ],
 )
 
 filegroup(
-    name = "boss_jks",
+    name = "boss_keystore",
     srcs = [
-        "Boss.jks",
+        "Boss.p12",
     ],
 )
 
 filegroup(
-    name = "trusted_jks",
+    name = "trusted_keystore",
     srcs = [
-        "Trusted.jks",
+        "Trusted.p12",
     ],
 )
