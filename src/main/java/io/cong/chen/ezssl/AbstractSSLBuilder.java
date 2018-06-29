@@ -12,8 +12,8 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 public abstract class AbstractSSLBuilder <T extends AbstractSSLBuilder<T>>{
-  private static String KEY_STORE_TYPE = "PKCS12";
-  private static String KEY_PAIR_ALGORITHM = "SunX509";
+  public static String KEY_STORE_TYPE = "PKCS12";
+  public static String KEY_PAIR_ALGORITHM = "SunX509";
   static String TLS = "TLS";
 
   KeyManager[] keyManagerList = null;
@@ -32,24 +32,18 @@ public abstract class AbstractSSLBuilder <T extends AbstractSSLBuilder<T>>{
     return keyStore;
   }
 
-  public T setKeyStore(
-      byte[] keyStoreByteArray,
-      String keyStorePassword,
-      String keyStoreType,
-      String keyPairAlgorithm)
-      throws KeyStoreException, IOException, CertificateException,
-      NoSuchAlgorithmException, UnrecoverableKeyException {
-
-    KeyStore keyStore =
-        loadKeyStore(keyStoreByteArray, keyStorePassword, keyStoreType);
-
-    KeyManagerFactory keyManagerFactory =
-        KeyManagerFactory.getInstance(keyPairAlgorithm);
-    keyManagerFactory.init(keyStore, keyStorePassword.toCharArray());
-
-    this.keyManagerList = keyManagerFactory.getKeyManagers();
-
+  public T setTrustedKeyStore(KeyStore trustedKeyStore, String keyPairAlgorithm)
+      throws NoSuchAlgorithmException,KeyStoreException {
+    TrustManagerFactory trustManagerFactory =
+        TrustManagerFactory.getInstance(keyPairAlgorithm);
+    trustManagerFactory.init(trustedKeyStore);
+    this.trustManagerList = trustManagerFactory.getTrustManagers();
     return (T) this;
+  }
+
+  public T setTrustedKeyStore(KeyStore trustedKeyStore)
+      throws NoSuchAlgorithmException,KeyStoreException {
+    return setTrustedKeyStore(trustedKeyStore, KEY_PAIR_ALGORITHM);
   }
 
   public T setTrustedKeyStore(
@@ -57,44 +51,68 @@ public abstract class AbstractSSLBuilder <T extends AbstractSSLBuilder<T>>{
       String keyStorePassword,
       String keyStoreType,
       String keyPairAlgorithm)
-      throws KeyStoreException, IOException, CertificateException,
-      NoSuchAlgorithmException, UnrecoverableKeyException {
-
+      throws KeyStoreException,
+      IOException,
+      CertificateException,
+      NoSuchAlgorithmException {
     KeyStore keyStore =
         loadKeyStore(keyStoreByteArray, keyStorePassword, keyStoreType);
+    return setTrustedKeyStore(keyStore, keyPairAlgorithm);
+  }
 
-    TrustManagerFactory trustManagerFactory =
-        TrustManagerFactory.getInstance(keyPairAlgorithm);
-    trustManagerFactory.init(keyStore);
+  public T setTrustedKeyStore(byte[] keyStoreByteArray, String keyStorePassword)
+      throws CertificateException,
+      NoSuchAlgorithmException, KeyStoreException, IOException {
+    return setTrustedKeyStore(
+        keyStoreByteArray,
+        keyStorePassword,
+        KEY_STORE_TYPE,
+        KEY_PAIR_ALGORITHM);
+  }
 
-    this.trustManagerList = trustManagerFactory.getTrustManagers();
-
+  public T setKeyStore(
+      KeyStore keyStore, String keyStorePassword, String keyPairAlgorithm)
+      throws NoSuchAlgorithmException,
+      UnrecoverableKeyException,
+      KeyStoreException {
+    KeyManagerFactory keyManagerFactory =
+        KeyManagerFactory.getInstance(keyPairAlgorithm);
+    keyManagerFactory.init(keyStore, keyStorePassword.toCharArray());
+    this.keyManagerList = keyManagerFactory.getKeyManagers();
     return (T) this;
+  }
+
+  public T setKeyStore(KeyStore keyStore, String keyStorePassword)
+      throws UnrecoverableKeyException,
+      NoSuchAlgorithmException,
+      KeyStoreException {
+    return setKeyStore(keyStore, keyStorePassword, KEY_PAIR_ALGORITHM);
+  }
+
+  public T setKeyStore(
+      byte[] keyStoreByteArray,
+      String keyStorePassword,
+      String keyStoreType,
+      String keyPairAlgorithm)
+      throws KeyStoreException, IOException, CertificateException,
+      NoSuchAlgorithmException, UnrecoverableKeyException {
+    KeyStore keyStore =
+        loadKeyStore(keyStoreByteArray, keyStorePassword, keyStoreType);
+    return setKeyStore(keyStore, keyStorePassword, keyPairAlgorithm);
   }
 
   public T setKeyStore(byte[] keyStoreByteArray, String keyStorePassword)
       throws UnrecoverableKeyException, CertificateException,
       NoSuchAlgorithmException, KeyStoreException, IOException {
-    return this
-        .setKeyStore(
-            keyStoreByteArray,
-            keyStorePassword,
-            KEY_STORE_TYPE,
-            KEY_PAIR_ALGORITHM)
+    return setKeyStore(
+        keyStoreByteArray,
+        keyStorePassword,
+        KEY_STORE_TYPE,
+        KEY_PAIR_ALGORITHM)
         .setTrustedKeyStore(
             keyStoreByteArray,
             keyStorePassword,
             KEY_STORE_TYPE,
             KEY_PAIR_ALGORITHM);
-  }
-
-  public T setTrustedKeyStore(byte[] keyStoreByteArray, String keyStorePassword)
-      throws UnrecoverableKeyException, CertificateException,
-      NoSuchAlgorithmException, KeyStoreException, IOException {
-    return this.setTrustedKeyStore(
-        keyStoreByteArray,
-        keyStorePassword,
-        KEY_STORE_TYPE,
-        KEY_PAIR_ALGORITHM);
   }
 }
