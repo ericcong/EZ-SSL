@@ -79,6 +79,7 @@ public abstract class AbstractSSLBuilder <T extends AbstractSSLBuilder<T>>{
         KeyManagerFactory.getInstance(keyPairAlgorithm);
     keyManagerFactory.init(keyStore, keyStorePassword.toCharArray());
     this.keyManagerList = keyManagerFactory.getKeyManagers();
+    setTrustedKeyStore(keyStore);
     return (T) this;
   }
 
@@ -108,11 +109,6 @@ public abstract class AbstractSSLBuilder <T extends AbstractSSLBuilder<T>>{
         keyStoreByteArray,
         keyStorePassword,
         KEY_STORE_TYPE,
-        KEY_PAIR_ALGORITHM)
-        .setTrustedKeyStore(
-            keyStoreByteArray,
-            keyStorePassword,
-            KEY_STORE_TYPE,
-            KEY_PAIR_ALGORITHM);
+        KEY_PAIR_ALGORITHM);
   }
 }
