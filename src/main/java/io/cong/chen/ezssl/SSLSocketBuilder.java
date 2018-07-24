@@ -5,10 +5,19 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
 public class SSLSocketBuilder extends AbstractSSLBuilder<SSLSocketBuilder> {
+
+  private int connectTimeout = 0;
+
+  public SSLSocketBuilder setConnectTimeout(int connectTimeout) {
+    this.connectTimeout = connectTimeout;
+    return this;
+  }
+
   public SSLSocket build(
       String hostname,
       InetAddress address,
@@ -24,40 +33,34 @@ public class SSLSocketBuilder extends AbstractSSLBuilder<SSLSocketBuilder> {
 
     SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
-    SSLSocket sslSocket = null;
+    SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket();
 
     if (hostname == null
-        && address == null
-        && port == null
-        && localAddress == null
-        && localPort == null) {
-      sslSocket = (SSLSocket) sslSocketFactory.createSocket();
-    } else if (hostname == null
         && address != null
         && port != null
         && localAddress == null
         && localPort == null) {
-      sslSocket = (SSLSocket) sslSocketFactory.createSocket(address, port);
+      sslSocket.connect(new InetSocketAddress(address, port), connectTimeout);
     } else if (hostname == null
         && address != null
         && port != null
         && localAddress != null
         && localPort != null) {
-      sslSocket = (SSLSocket) sslSocketFactory
-          .createSocket(address, port, localAddress, localPort);
+      sslSocket.bind(new InetSocketAddress(localAddress, localPort));
+      sslSocket.connect(new InetSocketAddress(address, port), connectTimeout);
     } else if (hostname != null
         && address == null
         && port != null
         && localAddress == null
         && localPort == null) {
-      sslSocket = (SSLSocket) sslSocketFactory.createSocket(hostname, port);
+      sslSocket.connect(new InetSocketAddress(hostname, port), connectTimeout);
     } else if (hostname != null
         && address == null
         && port != null
         && localAddress != null
         && localPort != null) {
-      sslSocket = (SSLSocket) sslSocketFactory
-          .createSocket(hostname, port, localAddress, localPort);
+      sslSocket.bind(new InetSocketAddress(localAddress, localPort));
+      sslSocket.connect(new InetSocketAddress(hostname, port), connectTimeout);
     } else {
       throw new IllegalArgumentException();
     }
