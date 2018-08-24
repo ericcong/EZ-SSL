@@ -1,0 +1,3 @@
+[submodule "keystore-tools"]
+	path = keystore-tools
+	url = git@github.com:ericcong/keystore-tools.git

@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-# Import a PEM format certificate to key store file.
-# Usage: ./import_certificate foo.pem bar.p12
-
-pem="$(basename $1)"
-name="${pem%.*}"
-
-keytool -importcert -storetype PKCS12 -file "$1" -keystore "$2" -alias $name

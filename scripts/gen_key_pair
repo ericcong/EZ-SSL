@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-# Generate key pair.
-# Usage: ./gen_key_pair foo 30
-# Output: foo.p12, valid for 30 days
-
-keytool -genkeypair -storetype PKCS12 -keystore "$1.p12" -alias "$1" -validity "$2"

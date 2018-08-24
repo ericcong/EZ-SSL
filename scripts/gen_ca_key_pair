@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-# Generate CA key pair.
-# Usage: ./gen_ca_key_pair ca 30
-# Output: ca.p12, valid for 30 days
-
-keytool -genkeypair -storetype PKCS12 -ext bc=ca:true -keystore "$1.p12" -alias "$1" -validity "$2"
